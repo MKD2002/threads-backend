@@ -8,24 +8,32 @@ import messageRoutes from "./routes/messageRoutes.js";
 import { v2 as cloudinary } from "cloudinary";
 
 const cors = require("cors");
-import { app, server } from "./socket/socket.js";
+import { server } from "./socket/socket.js";
 
 dotenv.config();
 
 connectDB();
 
-const PORT = 'https://threads-front.netlify.app/'
+const PORT = process.env.PORT || 3000; // Use process.env.PORT or a default value like 3000
 
 cloudinary.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Create an express app
+const app = express();
+
 // Middlewares
-app.use(cors({ origin: "https://threads-front.netlify.app/", credentials: true }));
-app.use(express.json({ limit: "50mb" })); // To parse JSON data in the req.body
-app.use(express.urlencoded({ extended: true })); // To parse form data in the req.body
+app.use(
+  cors({
+    origin: "https://threads-front.netlify.app", // Removed the trailing slash
+    credentials: true,
+  })
+);
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
